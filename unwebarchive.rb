@@ -85,12 +85,14 @@ class UnWebarchive
 end
 
   def fix_paths(name, resource_data)
-    accepted_formats = [".html"]
     exempted_formats = [".png", ".jpg", ".gif", ".svg", ".woff", ".woff2", ".aspx", ".js"]
-    if (accepted_formats.include? File.extname(name.split('?').first))
+    if (File.extname(name.split('?').first) == '.html')
       puts "[INFO] Fixing paths on '#{@dir}/#{name}' ..."
       resource_data.gsub!(/href="[^=]*http[^=]*:\/\//, 'href="')
       resource_data.gsub!(/src="[^=]*http[^=]*:\/\//, 'src="')
+    elsif (File.extname(name.split('?').first) == '.css')
+      resource_data.gsub!(/url\('[^\)]*http[^\)]*:\/\//, "url('../../")
+      resource_data.gsub!(/url\([^'\)]*http[^'\)]*:\/\//, "url(../../")
     elsif (exempted_formats.include? File.extname(name.split('?').first))
       puts "[INFO] Exempted path analisis on '#{@dir}/#{name}' ..."
     else
